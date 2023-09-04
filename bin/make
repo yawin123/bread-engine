@@ -1,0 +1,116 @@
+#! /bin/bash
+
+FOLDER="linux"
+if [[ $1 == "windows" || $1 == "win" || $2 == "windows" || $2 == "win" ]]; then
+  FOLDER="windows"
+fi
+
+function checkFolder() {
+  if [ ! -d "$FOLDER" ]; then
+    mkdir "$FOLDER"
+  fi
+
+  cd "$FOLDER"
+}
+
+function clean() {
+  rm -Rf *
+}
+
+function getCmake() {
+  if [[ $FOLDER == "linux" ]]; then
+    cmake ../..
+  else
+    cmake -DCMAKE_TOOLCHAIN_FILE=../../mingw.cmake ../..
+  fi
+}
+
+function makeall() {
+  if [ ! -f "Makefile" ]; then
+    getCmake
+  fi
+
+  make all
+
+  if [[ $FOLDER == "linux" ]]; then
+    mv libBreadEngine.so ../
+  else
+    mv libBreadEngine.dll ../
+    mv libBreadEngine.dll.a ../
+  fi
+}
+
+function clearFolder() {
+  cd ..
+  rm -Rf "$FOLDER"
+}
+
+
+case $1 in
+  "help")
+    echo " Herramienta para compilar libBreadEngine"
+    echo " ----------------------------------------"
+    echo " Esta herramienta está orientada a compilar la librería Bread Engine,"
+    echo " tanto para Linux como para Windows, de una manera cómoda"
+    echo ""
+    echo "  ./make [arg1] [arg2]"
+    echo ""
+    echo "  arg1 puede ser uno de los siguientes:"
+    echo "   help: muestra esta ayuda"
+    echo "   clean: limpia el directorio de compilación"
+    echo "   make: compila"
+    echo "   build: igual que make"
+    echo "   remake: limpia el directorio de compilación y compila"
+    echo "   rebuild: como remake"
+    echo "   windows: selecciona windows como plataforma para compilar"
+    echo "   win: como windows"
+    echo ""
+    echo "  arg2 puede ser uno de los siguientes:"
+    echo "   windows: selecciona windows como plataforma para compilar"
+    echo "   win: como windows"
+    echo ""
+    echo " Ejemplos:"
+    echo "   ./make          -> limpia el espacio de compilación para Linux, compila la"
+    echo "                      librería y elimina el espacio de compilación para Linux"
+    echo "   ./make win      -> limpia el espacio de compilación para Windows, compila la"
+    echo "                      librería y elimina el espacio de compilación para Windows"
+    echo "   ./make clean    -> limpia el espacio de compilación para Linux"
+    echo "   ./make make win -> compila la librería para Windows"
+    echo "   ./make rebuild  -> recompila la librería para Linux"
+    echo ""
+    ;;
+
+  "clean")
+    checkFolder
+    clean
+    ;;
+
+  "make")
+    checkFolder
+    makeall
+    ;;
+  "build")
+    checkFolder
+    makeall
+    ;;
+
+  "remake")
+    checkFolder
+    clean
+    getCmake
+    makeall
+    ;;
+  "rebuild")
+    checkFolder
+    clean
+    getCmake
+    makeall
+    ;;
+
+  *)
+    checkFolder
+    clean
+    getCmake
+    makeall
+;;
+esac

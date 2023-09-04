@@ -1,0 +1,5 @@
+bin/libBreadEngine.so
+bin/libBreadEngine.dll
+bin/libBreadEngine.dll.a
+bin/linux/
+bin/windows/
