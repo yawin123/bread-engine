@@ -1,5 +1,6 @@
 #pragma once
 
+#include <BreadEngine/core/components.hpp>
 #include <BreadEngine/core/entities.hpp>
 #include <BreadEngine/core/utils.hpp>
 
@@ -18,7 +19,7 @@ namespace brd
         template<typename T>
         T& AddComponent(Entity& entity)
         {
-          
+
         }
 
       private:

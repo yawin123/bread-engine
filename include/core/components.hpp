@@ -6,10 +6,10 @@ namespace brd
 {
   namespace core
   {
-    class Container { virtual ~Container() = default; };
+    struct Container { virtual ~Container() = default; };
 
     template<typename T>
-    class ComponentContainer : public Container
+    struct ComponentContainer : public Container
     {
       virtual ~ComponentContainer() = default;
       std::vector<T> data;
