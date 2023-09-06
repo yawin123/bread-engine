@@ -10,8 +10,8 @@ namespace brd
   {
     public:
       explicit Sprite(core::brdID entityID);
-      virtual ~Sprite() = default;
+      virtual ~Sprite();
 
-      Surface_ptr graph;
+      SDL_Surface* graph;
   };
 };

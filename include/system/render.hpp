@@ -26,7 +26,7 @@ namespace brd
       virtual ~Render();
 
       virtual void Configure(core::SystemConfiguration& conf) override;
-      virtual void Update();
+      virtual void Update(core::Context& ctxt);
 
     private:
       RenderConfiguration configuration;

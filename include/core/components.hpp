@@ -37,15 +37,16 @@ namespace brd
         template<typename T>
         T& CreateComponent(brdID entityID)
         {
-          auto components = GetComponents<T>();
-          auto component = components.data.emplace(T(entityID));
+          auto& components = GetComponents<T>();
+          auto& component = components.data.emplace_back(entityID);
+          return component;
         }
 
         template<typename T>
         ComponentContainer<T>& GetComponents()
         {
           ComponentContainer<T>* ret {nullptr};
-          auto id = typeid(T);
+          auto& id = typeid(T);
 
           auto it = data.find(id);
           if(it != data.end())

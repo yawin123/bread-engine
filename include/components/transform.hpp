@@ -1,6 +1,7 @@
 #pragma once
 
 #include <BreadEngine/core/components.hpp>
+#include <BreadEngine/core/utils.hpp>
 #include <BreadEngine/typedeclarations.hpp>
 
 namespace brd
@@ -8,6 +9,7 @@ namespace brd
   class Transform2D : public core::Component
   {
     public:
+      explicit Transform2D(core::brdID entityID);
       virtual ~Transform2D() = default;
 
       constVector2 Position() const;

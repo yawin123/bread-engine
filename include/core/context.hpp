@@ -19,7 +19,13 @@ namespace brd
         template<typename T>
         T& AddComponent(Entity& entity)
         {
+          return components.CreateComponent<T>(entity.id);
+        }
 
+        template<typename T>
+        ComponentContainer<T>& GetComponents()
+        {
+          return components.GetComponents<T>();
         }
 
       private:

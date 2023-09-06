@@ -2,6 +2,8 @@
 
 namespace brd
 {
+  Transform2D::Transform2D(core::brdID entityID) : core::Component(entityID) {}
+
   constVector2 Transform2D::Position() const
   {
     return {p_x, p_y};

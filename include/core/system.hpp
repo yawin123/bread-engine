@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <BreadEngine/core/context.hpp>
 #include <BreadEngine/core/utils.hpp>
 
 namespace brd
@@ -16,7 +17,7 @@ namespace brd
     {
       virtual ~System() = default;
       virtual void Configure(SystemConfiguration& conf) = 0;
-      virtual void Update() = 0;
+      virtual void Update(Context& ctxt) = 0;
     };
 
     class SystemManager
