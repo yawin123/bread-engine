@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <memory>
 #include <BreadEngine/core/context.hpp>
 #include <BreadEngine/core/utils.hpp>
@@ -33,10 +34,13 @@ namespace brd
           T* ret = GetSystem<T>();
           if(ret) return *ret;
 
-          auto ptr = std::make_unique<T>();
-          ret = ptr.get();
+          /*auto ptr = std::make_unique<T>();
+          ret = ptr.get();*/
 
+          std::unique_ptr<System> ptr = std::unique_ptr<System>(new T());
           systems[id] = std::move(ptr);
+
+          ret = GetSystem<T>();
           return *ret;
         }
 

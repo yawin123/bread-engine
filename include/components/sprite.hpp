@@ -4,6 +4,13 @@
 #include <BreadEngine/core/utils.hpp>
 #include <BreadEngine/typedeclarations.hpp>
 
+#include <memory>
+#include <string>
+
+extern "C" {
+  #include <glad.h>
+}
+
 namespace brd
 {
   class Sprite : public core::Component
@@ -12,6 +19,25 @@ namespace brd
       explicit Sprite(core::brdID entityID);
       virtual ~Sprite();
 
-      SDL_Surface* graph;
+      void LoadImg(std::string path) noexcept;
+
+      int w {0}, h {0}, chan {0};
+      GLuint texture_id;
+
+      unsigned int VAO, VBO, EBO;
+
+      GLfloat vertices[20] = {
+        // Posiciones          // Coordenadas de textura
+        0.5f,  0.5f, 0.0f,    1.0f, 0.0f, // Arriba derecha
+        0.5f, -0.5f, 0.0f,    1.0f, 1.0f, // Abajo derecha
+       -0.5f, -0.5f, 0.0f,    0.0f, 1.0f, // Abajo izquierda
+       -0.5f,  0.5f, 0.0f,    0.0f, 0.0f, // Arriba izquierda
+      };
+
+      // Índices para definir los triángulos
+      unsigned int indices[6] = {
+          0, 1, 3, // Primer triángulo
+          1, 2, 3  // Segundo triángulo
+      };
   };
 };

@@ -1,25 +1,32 @@
-cmake_minimum_required(VERSION 2.8.0)
-set(CMAKE_CXX_FLAGS "-O3 -std=c++20")
+cmake_minimum_required(VERSION 3.0)
 project(BreadEngine)
-add_library(
-  BreadEngine
-  SHARED
-  src/core/components.cpp
-  src/core/context.cpp
-  src/system/render.cpp
-  src/components/transform.cpp
-  src/components/sprite.cpp
-)
 
-target_include_directories(BreadEngine PUBLIC include/)
-find_library(SDL2_LIBRARY SDL2)
-target_link_libraries(
-  BreadEngine
-  PUBLIC
-  ${SDL2_LIBRARY}
-  SDL2main
-  SDL2_image
-  SDL2_mixer
-  SDL2_net
-  SDL2_ttf
-)
+# Agrega la fuente de GLFW a tu proyecto
+add_subdirectory(libs/glfw)
+
+# Recopila automáticamente todos los archivos en src y sus subdirectorios
+file(GLOB SOURCES src/*.cpp src/**/*.cpp)
+
+# Set C++ standard to C++20
+set(CMAKE_CXX_STANDARD 20)
+
+# Set Position Independent Code
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+# Agrega la biblioteca BreadEngine
+add_library(BreadEngine SHARED ${SOURCES})
+
+# Establece los directorios de inclusión
+target_include_directories(BreadEngine PUBLIC include/ libs/glfw/include/ libs/stb/include libs/glad/include)
+
+# Agrega los archivos fuente de Glad directamente a tu objetivo BreadEngine
+target_sources(BreadEngine PRIVATE libs/glad/src/glad.c)
+
+# Agrega los archivos fuente de STB directamente a tu objetivo BreadEngine
+target_sources(BreadEngine PRIVATE libs/stb/src/stb_vorbis.c)
+
+# Define la macro GLFW_INCLUDE_NONE antes de incluir el archivo de encabezado de GLFW
+add_definitions(-DGLFW_INCLUDE_NONE)
+
+# Vincula GLFW estáticamente
+target_link_libraries(BreadEngine PUBLIC glfw)

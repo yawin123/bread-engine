@@ -109,8 +109,6 @@ case $1 in
 
   *)
     checkFolder
-    clean
-    getCmake
     makeall
 ;;
 esac
