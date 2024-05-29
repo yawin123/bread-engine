@@ -15,10 +15,12 @@ namespace brd
         explicit Context() = default;
         virtual ~Context() = default;
 
+        //template<typename... CMPS>
         inline Entity& CreateEntity()
         {
-          return entities[entities.push(Entity{})];
-
+          Entity& e = entities[entities.push(Entity{})];
+          //(... AddComponent<CMPS>(e) );
+          return e;
         }
 
         template<typename T>
