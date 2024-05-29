@@ -39,7 +39,7 @@ namespace brd
         T& CreateComponent(brdID entityID)
         {
           auto& components = GetComponents<T>();
-          auto& component = components.data.push(entityID);
+          auto& component = components.data[components.data.push(T{entityID})];
           return component;
         }
 
