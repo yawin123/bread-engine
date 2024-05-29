@@ -13,6 +13,9 @@ namespace brd
 {
   namespace core
   {
+    //brdID
+      using brdID = std::size_t;
+
     //TypeInfoRef
       using TypeInfoRef = std::reference_wrapper<const std::type_info>;
 
@@ -22,9 +25,6 @@ namespace brd
 
       template<typename T>
       using hash_map = std::unordered_map<TypeInfoRef, std::unique_ptr<T>, Hasher, EqualTo>;
-
-    //brdID
-      using brdID = std::size_t;
 
   };
 };

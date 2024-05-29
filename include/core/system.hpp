@@ -37,7 +37,7 @@ namespace brd
           /*auto ptr = std::make_unique<T>();
           ret = ptr.get();*/
 
-          std::unique_ptr<System> ptr = std::unique_ptr<System>(new T());
+          std::unique_ptr<System> ptr = std::make_unique<T>();
           systems[id] = std::move(ptr);
 
           ret = GetSystem<T>();

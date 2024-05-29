@@ -2,6 +2,7 @@
 
 #include <BreadEngine/core/components.hpp>
 #include <BreadEngine/core/entities.hpp>
+#include <BreadEngine/core/slotmap.hpp>
 #include <BreadEngine/core/utils.hpp>
 
 namespace brd
@@ -11,10 +12,14 @@ namespace brd
     class Context
     {
       public:
-        explicit Context();
+        explicit Context() = default;
         virtual ~Context() = default;
 
-        Entity& CreateEntity();
+        inline Entity& CreateEntity()
+        {
+          return entities[entities.push(Entity{})];
+
+        }
 
         template<typename T>
         T& AddComponent(Entity& entity)
@@ -29,7 +34,7 @@ namespace brd
         }
 
       private:
-        std::vector<Entity> entities;
+        slotmap<Entity> entities;
         ComponentManager components;
     };
   };

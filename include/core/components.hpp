@@ -1,6 +1,7 @@
 #pragma once
 
 #include <BreadEngine/core/utils.hpp>
+#include <BreadEngine/core/slotmap.hpp>
 
 namespace brd
 {
@@ -12,7 +13,7 @@ namespace brd
     struct ComponentContainer : public Container
     {
       virtual ~ComponentContainer() = default;
-      std::vector<T> data;
+      slotmap<T> data;
     };
 
     class Component
@@ -38,7 +39,7 @@ namespace brd
         T& CreateComponent(brdID entityID)
         {
           auto& components = GetComponents<T>();
-          auto& component = components.data.emplace_back(entityID);
+          auto& component = components.data.push(entityID);
           return component;
         }
 
@@ -57,7 +58,6 @@ namespace brd
           {
             auto ptr = std::make_unique<ComponentContainer<T>>();
             ret = ptr.get();
-            ret->data.reserve(INITIALVECTORSIZE);
             data[id] = std::move(ptr);
           }
 
