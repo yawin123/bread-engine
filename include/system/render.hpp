@@ -23,7 +23,7 @@ namespace brd
   {
     public:
       explicit Render();
-      virtual ~Render();
+      virtual ~Render() = default;
 
       virtual void Configure(core::SystemConfiguration& conf) noexcept override;
       virtual void Update(core::Context& ctxt) noexcept;
@@ -31,10 +31,16 @@ namespace brd
       bool ShouldWindowClose() const noexcept;
 
     private:
+      using GLFWDestructor = void(*)(GLFWwindow*);
+      using Window_ptr = std::unique_ptr<GLFWwindow, GLFWDestructor>;
+
+      static void gLFWWindowDeleter(GLFWwindow* window);
+
       RenderConfiguration configuration;
 
-      //Window_ptr window;
-      GLFWwindow* window;
+      Window_ptr window{glfwCreateWindow(0,0,"",nullptr, nullptr),
+                        gLFWWindowDeleter};
+      //GLFWwindow* window;
 
       // Vertex Shader
         const char* vertexShaderSource = R"(

@@ -10,6 +10,12 @@ extern "C" {
 
 namespace brd
 {
+  void Render::gLFWWindowDeleter(GLFWwindow* window)
+  {
+    glfwDestroyWindow(window);
+    glfwTerminate();
+  }
+
   Render::Render()
   {
     // Inicializa GLFW
@@ -22,34 +28,19 @@ namespace brd
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
   }
 
-  Render::~Render()
-  {
-    //Eliminamos la Ventana
-      glfwDestroyWindow(window);
-
-    // Termina GLFW
-      glfwTerminate();
-  }
-
   void Render::Configure(core::SystemConfiguration& conf)
   {
     configuration = reinterpret_cast<RenderConfiguration&>(conf);
 
-    // Crea una ventana GLFW
-      /*window = Window_ptr(glfwCreateWindow(configuration.width,
+    // Se modifica la ventana
+      window = Window_ptr{glfwCreateWindow(configuration.width,
                                            configuration.height,
                                            configuration.title.c_str(),
-                                           nullptr, nullptr));*/
-      window = glfwCreateWindow(configuration.width,
-                                configuration.height,
-                                configuration.title.c_str(),
-                               nullptr, nullptr);
-      if(!window) {
-          std::cerr << "Error al crear la ventana GLFW" << "\n";
-      }
+                                           nullptr, nullptr),
+                          gLFWWindowDeleter};
 
     // Establece el contexto actual de OpenGL
-      glfwMakeContextCurrent(window);
+      glfwMakeContextCurrent(window.get());
 
     // Inicializa glad para cargar funciones de OpenGL
       if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -124,12 +115,12 @@ namespace brd
     }
 
     // Intercambia los búferes frontal y trasero
-      glfwSwapBuffers(window);
+      glfwSwapBuffers(window.get());
   }
 
   bool Render::ShouldWindowClose() const
   {
     glfwPollEvents();
-    return glfwWindowShouldClose(window);
+    return glfwWindowShouldClose(window.get());
   }
 };
