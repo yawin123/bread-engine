@@ -1,3 +1,4 @@
+#include <cstdint>
 #include <utility>
 
 namespace brd
@@ -13,6 +14,9 @@ namespace brd
             struct is_false : constant<bool, false>{};
             struct is_true : constant<bool, true>{};
 
+            template<size_t P>
+            struct is_position : constant<size_t, P>{};
+
             template <typename T>
             struct is_type { using type = T; };
 
@@ -26,19 +30,42 @@ namespace brd
             template <typename T, typename U>
             constexpr bool is_same_type = is_same<T,U>::value;
 
-        //From list
-            template<std::size_t N, typename... Ts>
-            struct type_from_typename_list { static_assert(sizeof...(Ts) > 0); };
+        //Tipos condicionales
+            template<bool C, typename T, typename F>
+            struct get_conditional_type : is_type<F> {};
 
-            template<std::size_t N, typename... Ts>
-            using type_from_list = typename type_from_typename_list<N, Ts...>::type;
+            template<typename T, typename F>
+            struct get_conditional_type<true, T, F> : is_type<T> {};
 
-            template<typename T, typename... Ts>
-            struct type_from_typename_list<0, T, Ts...> : is_type<T> {};
+            template<bool C, typename T, typename F>
+            using conditional_type = typename get_conditional_type<C,T,F>::type;
 
-            template<std::size_t N, typename T, typename... Ts>
-            struct type_from_typename_list<N, T, Ts...> : is_type<type_from_list<N-1, Ts...>>{};
+        //Manipulación de listas de tipos
+            //Dada una posición quiero el tipo
+                template<std::size_t N, typename... Ts>
+                struct type_from_typename_list { static_assert(sizeof...(Ts) > 0), "Out of range"; };
 
+                template<std::size_t N, typename... Ts>
+                using type_from_list = typename type_from_typename_list<N, Ts...>::type;
+
+                template<typename T, typename... Ts>
+                struct type_from_typename_list<0, T, Ts...> : is_type<T> {};
+
+                template<std::size_t N, typename T, typename... Ts>
+                struct type_from_typename_list<N, T, Ts...> : is_type<type_from_list<N-1, Ts...>>{};
+
+            //Dado un tipo, quiero la posición
+                template<typename T, typename... Ts>
+                struct position_from_typename_list { static_assert(sizeof...(Ts) != 0, "Type must be in typelist"); };
+
+                template<typename T, typename... Ts>
+                constexpr size_t type_position = position_from_typename_list<T, Ts...>::value;
+
+                template<typename T, typename... Ts>
+                struct position_from_typename_list<T, T, Ts...> : is_position<0> {};
+
+                template<typename T, typename U, typename... Ts>
+                struct position_from_typename_list<T, U, Ts...> : is_position< 1 + type_position<T, Ts...> >{};
 
         //Typelist
             template <typename... Ts>
@@ -49,24 +76,32 @@ namespace brd
                 consteval static bool contains() noexcept { return ( false || ... || is_same_type<T,Ts> ); }
 
                 template <typename T>
-                consteval static std::size_t position() noexcept { return 1; }
+                consteval static std::size_t position() noexcept
+                {
+                    static_assert(contains<T>());
+                    return type_position<T, Ts...>;
+                }
             };
 
         //Typelist traits
             template <typename TYPELIST>
             struct TypeTraits {
-                consteval static std::size_t size() noexcept { return TYPELIST::size(); }
+                using mask_type = conditional_type<(TYPELIST::size() <= 8),  uint8_t,
+                                  conditional_type<(TYPELIST::size() <= 16), uint16_t,
+                                                                             uint32_t
+                                  >>;
+
+                consteval static uint8_t size() noexcept { return TYPELIST::size(); }
 
                 template<typename T>
-                consteval static std::size_t id() noexcept
+                consteval static uint8_t id() noexcept
                 {
                     static_assert(TYPELIST::template contains<T>(), "Type T must be in TYPELIST");
-                    return 1;
-
+                    return TYPELIST::template position<T>();
                 }
 
                 template<typename T>
-                consteval static std::size_t mask() noexcept { return 1 << id<T>(); }
+                consteval static mask_type mask() noexcept { return 1 << id<T>(); }
             };
     };
   };
