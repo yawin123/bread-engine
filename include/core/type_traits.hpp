@@ -103,6 +103,16 @@ namespace brd
                 template<typename T>
                 consteval static mask_type mask() noexcept { return 1 << id<T>(); }
             };
+
+        //Template replace
+            template <template <typename...> class N, typename L>
+            struct replace_template {};
+            template <template <typename...> class N, typename... Ts>
+            struct replace_template<N, Typelist<Ts...>> {
+                using type = N<Ts...>;
+            };
+            template <template <typename...> class N, typename L>
+            using replace = typename replace_template<N,L>::type;
     };
   };
 };
