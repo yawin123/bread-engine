@@ -2,7 +2,9 @@
 
 #include <iostream>
 #include <memory>
+#include <tuple>
 #include <BreadEngine/core/context.hpp>
+#include <BreadEngine/core/type_traits.hpp>
 #include <BreadEngine/core/utils.hpp>
 
 namespace brd
@@ -21,44 +23,23 @@ namespace brd
       virtual void Update(Context& ctxt) = 0;
     };
 
+    template<typename... SL>
     class SystemManager
     {
       public:
         explicit SystemManager() = default;
 
-        template<typename T>
-        T& AddSystem()
+        using SystemList = type_traits::Typelist<SL...>;
+        using systeminfo = type_traits::TypeTraits<SystemList>;
+        template<typename SYSTEM>
+        SYSTEM& GetSystem()
         {
-          TypeInfoRef id = typeid(T);
-
-          T* ret = GetSystem<T>();
-          if(ret) return *ret;
-
-          /*auto ptr = std::make_unique<T>();
-          ret = ptr.get();*/
-
-          std::unique_ptr<System> ptr = std::make_unique<T>();
-          systems[id] = std::move(ptr);
-
-          ret = GetSystem<T>();
-          return *ret;
-        }
-
-        template<typename T>
-        T* GetSystem() const
-        {
-          auto it = systems.find(typeid(T));
-
-          if(it != systems.end())
-          {
-            return reinterpret_cast<T*>(it->second.get());
-          }
-
-          return nullptr;
+          constexpr auto id { systeminfo::template id<SYSTEM>() };
+          return std::get<id>(systems);
         }
 
       private:
-        hash_map<System> systems;
+        type_traits::replace<std::tuple, SystemList> systems;
     };
   };
 };

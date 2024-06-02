@@ -43,7 +43,7 @@ namespace brd
         //Manipulación de listas de tipos
             //Dada una posición quiero el tipo
                 template<std::size_t N, typename... Ts>
-                struct type_from_typename_list { static_assert(sizeof...(Ts) > 0), "Out of range"; };
+                struct type_from_typename_list { static_assert(sizeof...(Ts) > 0, "Out of range"); };
 
                 template<std::size_t N, typename... Ts>
                 using type_from_list = typename type_from_typename_list<N, Ts...>::type;
@@ -78,7 +78,7 @@ namespace brd
                 template <typename T>
                 consteval static std::size_t position() noexcept
                 {
-                    static_assert(contains<T>());
+                    static_assert(contains<T>(), "TypeList must contain T");
                     return type_position<T, Ts...>;
                 }
             };
