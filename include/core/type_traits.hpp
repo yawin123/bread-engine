@@ -88,8 +88,9 @@ namespace brd
             struct TypeTraits {
                 using mask_type = conditional_type<(TYPELIST::size() <= 8),  uint8_t,
                                   conditional_type<(TYPELIST::size() <= 16), uint16_t,
-                                                                             uint32_t
-                                  >>;
+                                  conditional_type<(TYPELIST::size() <= 32), uint32_t,
+                                                                             uint64_t
+                                  >>>;
 
                 consteval static uint8_t size() noexcept { return TYPELIST::size(); }
 
