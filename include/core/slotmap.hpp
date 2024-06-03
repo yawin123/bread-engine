@@ -7,8 +7,10 @@ namespace brd {
   namespace core {
     using index_type = std::size_t;
 
-    template<typename T, index_type Capacity = 10>
+    template<typename T>
     class slotmap {
+      index_type Capacity {10};
+
       public:
         explicit slotmap() {
           indices_.resize(Capacity);

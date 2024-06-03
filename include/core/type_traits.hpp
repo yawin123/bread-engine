@@ -1,3 +1,4 @@
+#pragma once
 #include <cstdint>
 #include <utility>
 
@@ -67,9 +68,9 @@ namespace brd
                 template<typename T, typename U, typename... Ts>
                 struct position_from_typename_list<T, U, Ts...> : is_position< 1 + type_position<T, Ts...> >{};
 
-        //Typelist
+        //type_list
             template <typename... Ts>
-            struct Typelist {
+            struct type_list {
                 consteval static std::size_t size() noexcept { return sizeof...(Ts); }
 
                 template <typename T>
@@ -78,14 +79,56 @@ namespace brd
                 template <typename T>
                 consteval static std::size_t position() noexcept
                 {
-                    static_assert(contains<T>(), "TypeList must contain T");
+                    static_assert(contains<T>(), "type_list must contain T");
                     return type_position<T, Ts...>;
                 }
+
+                template<typename... Others>
+                constexpr type_list<Ts..., Others...> operator+(type_list<Others...>) { return {}; }
             };
 
-        //Typelist traits
+        //type_list head
+            template <typename... Ts>
+            struct extract_head;
+            template <typename H, typename... Tail>
+            struct extract_head<type_list<H,Tail...>> {
+                using type = H;
+            };
+            template <typename TL>
+            using head = typename extract_head<TL>::type;
+
+        //type_list push
+            template <typename E, typename TL>
+            struct front_push;
+            template <typename E, typename... Ts>
+            struct front_push<E, type_list<Ts...>> {
+                using type = type_list<E, Ts...>;
+            };
+            template <typename E, typename TL>
+            using push_front = typename front_push<E, TL>::type;
+
+            template <typename E, typename TL>
+            struct back_push;
+            template <typename E, typename... Ts>
+            struct back_push<E, type_list<Ts...>> {
+                using type = type_list<Ts...,E>;
+            };
+            template <typename E, typename TL>
+            using push_back= typename back_push<E, TL>::type;
+
+        //type_list pop
+            template <typename... Ts>
+            struct front_pop;
+            template <typename H, typename... Tail>
+            struct front_pop<type_list<H,Tail...>> {
+                using type = type_list<Tail...>;
+            };
+            template <typename TL>
+            using pop = typename front_pop<TL>::type;
+
+        //type_list traits
             template <typename TYPELIST>
-            struct TypeTraits {
+            struct traits {
                 using mask_type = conditional_type<(TYPELIST::size() <= 8),  uint8_t,
                                   conditional_type<(TYPELIST::size() <= 16), uint16_t,
                                   conditional_type<(TYPELIST::size() <= 32), uint32_t,
@@ -109,11 +152,28 @@ namespace brd
             template <template <typename...> class N, typename L>
             struct replace_template {};
             template <template <typename...> class N, typename... Ts>
-            struct replace_template<N, Typelist<Ts...>> {
+            struct replace_template<N, type_list<Ts...>> {
                 using type = N<Ts...>;
             };
             template <template <typename...> class N, typename L>
-            using replace = typename replace_template<N,L>::type;
+            using make_container = typename replace_template<N,L>::type;
+
+        //Apply foreach
+            template<template <typename...> class N, typename L>
+            struct apply_foreach {};
+
+            template<template <typename...> class N, typename L>
+            using foreach_make_container = typename apply_foreach< N, L>::type;
+
+            template <template <typename...> class N, typename T>
+            struct apply_foreach<N, type_list<T>> {
+                using type = type_list<N<T>>;
+            };
+
+            template <template <typename...> class N, typename T, typename... Ts>
+            struct apply_foreach<N, type_list<T, Ts...>> {
+                using type = push_front< N<T>, foreach_make_container< N, type_list<Ts...> > >;
+            };
     };
   };
 };

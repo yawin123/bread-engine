@@ -29,8 +29,8 @@ namespace brd
       public:
         explicit SystemManager() = default;
 
-        using SystemList = type_traits::Typelist<SL...>;
-        using systeminfo = type_traits::TypeTraits<SystemList>;
+        using systemlist = type_traits::type_list<SL...>;
+        using systeminfo = type_traits::traits<systemlist>;
         template<typename SYSTEM>
         SYSTEM& GetSystem()
         {
@@ -39,7 +39,7 @@ namespace brd
         }
 
       private:
-        type_traits::replace<std::tuple, SystemList> systems;
+        type_traits::make_container<std::tuple, systemlist> systems;
     };
   };
 };
