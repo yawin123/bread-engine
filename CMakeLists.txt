@@ -4,6 +4,11 @@ project(BreadEngine)
 # Agrega la fuente de GLFW a tu proyecto
 add_subdirectory(libs/glfw)
 
+# If you only include nlohmann/json in PRIVATE source files, you do not need to install it
+# when your main project gets installed.
+set(JSON_Install OFF CACHE INTERNAL "")
+add_subdirectory(libs/nlohmann_json)
+
 # Recopila automáticamente todos los archivos en src y sus subdirectorios
 file(GLOB SOURCES src/*.cpp src/**/*.cpp)
 
@@ -17,7 +22,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 add_library(BreadEngine SHARED ${SOURCES})
 
 # Establece los directorios de inclusión
-target_include_directories(BreadEngine PUBLIC include/ libs/glfw/include/ libs/stb/include libs/glad/include)
+target_include_directories(BreadEngine PUBLIC include/ libs/glfw/include/ libs/stb/include libs/glad/include libs/nlohmann_json/include)
 
 # Agrega los archivos fuente de Glad directamente a tu objetivo BreadEngine
 target_sources(BreadEngine PRIVATE libs/glad/src/glad.c)
@@ -29,4 +34,4 @@ target_sources(BreadEngine PRIVATE libs/stb/src/stb_vorbis.c)
 add_definitions(-DGLFW_INCLUDE_NONE)
 
 # Vincula GLFW estáticamente
-target_link_libraries(BreadEngine PUBLIC glfw)
+target_link_libraries(BreadEngine PUBLIC glfw nlohmann_json::nlohmann_json)

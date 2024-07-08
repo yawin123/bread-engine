@@ -2,6 +2,8 @@
 
 #include <unordered_map>
 #include <string>
+#include <fstream>
+#include <nlohmann/json.hpp>
 
 #include <BreadEngine/core/type_traits.hpp>
 #include <BreadEngine/typedeclarations.hpp>
@@ -11,7 +13,9 @@ namespace brd
 {
   struct DataStoreConfiguration : public core::SystemConfiguration
   {
-    std::string dataDir {""};
+    std::string dataDir {"."};
+    std::string saveFile {"savedata"};
+    std::string saveExtension {"json"};
   };
 
   template<typename... Ts>
@@ -32,14 +36,14 @@ namespace brd
       virtual void Update(core::Context& ctxt) noexcept {}
 
       template<typename T>
-      T& Get(std::string key)
+      T& Get(const std::string& key)
       {
         constexpr auto id { datainfo::template id<T>() };
         return std::get<id>(data)[key];
       }
 
       template<typename T>
-      void Set(std::string key, T&& value)
+      void Set(const std::string& key, T&& value)
       {
         constexpr auto id { datainfo::template id<T>() };
         std::get<id>(data)[key] = value;
@@ -47,16 +51,39 @@ namespace brd
 
       void Save()
       {
-        for(unsigned int i = 0; i < datainfo::size(); i++)
+        nlohmann::json j;
+
+        //Generamos el json a guardar
+        SaveDataList<datalist>(j);
+
+        // Guardar el JSON en un archivo
+        std::ofstream file(configuration.dataDir + "/" + configuration.saveFile + "." + configuration.saveExtension);
+        if (file.is_open())
         {
-          using id = core::type_traits::type_from_list<i,Ts...>;
-          //SaveData<datainfo::>();
+          file << j.dump(4); // Formato bonito con 4 espacios de indentación
+          file.close();
+        }
+        else
+        {
+          std::cerr << "No se pudo abrir el archivo para guardar los datos.\n";
         }
       }
 
       void Load()
       {
-
+        // Leer el archivo JSON
+        std::ifstream file(configuration.dataDir + "/" + configuration.saveFile + "." + configuration.saveExtension);
+        if (file.is_open())
+        {
+          nlohmann::json j;
+          file >> j;
+          file.close();
+          LoadDataList<datalist>(j);
+        }
+        else
+        {
+          std::cerr << "No se pudo abrir el archivo para cargar los datos.\n";
+        }
       }
 
     private:
@@ -68,9 +95,59 @@ namespace brd
       DataStoreConfiguration configuration;
 
       template<typename T>
-      void SaveData()
+      void SaveData(nlohmann::json& j)
       {
+        constexpr auto id { datainfo::template id<T>() };
+        const auto& dataMap = std::get<id>(data);
 
+        nlohmann::json dataJson;
+        for(const auto& [key, value] : dataMap)
+        {
+          dataJson[key] = value;
+        }
+
+        j[std::to_string(id)] = dataJson;
+      }
+
+      template<typename TL>
+      void SaveDataList(nlohmann::json& j)
+      {
+        if constexpr (TL::size() > 0)
+        {
+          SaveData<core::type_traits::head<TL>>(j);
+
+          if constexpr (TL::size() > 1)
+          {
+            SaveDataList<core::type_traits::pop<TL>>(j);
+          }
+        }
+      }
+
+      template<typename T>
+      void LoadData(nlohmann::json& j)
+      {
+        constexpr auto id_ { datainfo::template id<T>() };
+
+        std::string id = std::to_string(id_);
+
+        for(const auto& [key, value] : j[id].items())
+        {
+          Set<T>(key, static_cast<T>(value));
+        }
+      }
+
+      template<typename TL>
+      void LoadDataList(nlohmann::json& j)
+      {
+        if constexpr (TL::size() > 0)
+        {
+          LoadData<core::type_traits::head<TL>>(j);
+
+          if constexpr (TL::size() > 1)
+          {
+            LoadDataList<core::type_traits::pop<TL>>(j);
+          }
+        }
       }
   };
 };
