@@ -1,12 +1,8 @@
-## Dependencias
+<img src="https://gitlab.com/uploads/-/system/project/avatar/49037792/breadIcon.png?width=128"/>
 
-* libsdl2-2.0-0
-* libsdl2-dev
-* libsdl2-image-2.0-0
-* libsdl2-image-dev
-* libsdl2-mixer-2.0-0
-* libsdl2-mixer-dev
-* libsdl2-net-2.0-0
-* libsdl2-net-dev
-* libsdl2-ttf-2.0-0
-* libsdl2-ttf-dev
+# Bread Engine
+Bread Engine es un motor de videojuegos ECS implementado en C++20 que pretende aprovechar las mejoras de las nuevas versiones del lenguaje en la implementación de la arquitectura flexible y modular ECS (Entity - Component - System) 
+
+## Dependencias
+ - g++
+ - cmake  
