@@ -5,7 +5,7 @@
 #include <BreadEngine/typedeclarations.hpp>
 
 #include <memory>
-#include <string>
+#include <string_view>
 
 extern "C" {
   #include <glad.h>
@@ -16,10 +16,9 @@ namespace brd
   class Sprite : public core::Component
   {
     public:
-      explicit Sprite(core::brdID entityID);
-      virtual ~Sprite();
+      explicit Sprite(core::brdID entityID, std::string_view path = "");
 
-      void LoadImg(std::string path) noexcept;
+      void LoadImg(std::string_view path) noexcept;
 
       int w {0}, h {0}, chan {0};
       GLuint texture_id;

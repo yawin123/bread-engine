@@ -1,21 +1,16 @@
 #pragma once
 
-#include <BreadEngine/core/utils.hpp>
 #include <BreadEngine/core/slotmap.hpp>
+#include <BreadEngine/core/type_traits.hpp>
+#include <BreadEngine/core/utils.hpp>
+
+#include <tuple>
+#include <utility>
 
 namespace brd
 {
   namespace core
   {
-    struct Container { virtual ~Container() = default; };
-
-    template<typename T>
-    struct ComponentContainer : public Container
-    {
-      virtual ~ComponentContainer() = default;
-      slotmap<T> data;
-    };
-
     class Component
     {
       public:
@@ -30,42 +25,39 @@ namespace brd
         inline static brdID nextID {0};
     };
 
+    template<typename CL>
     class ComponentManager
     {
       public:
+        using componentlist = CL;
+        using componentinfo = type_traits::traits<componentlist>;
+
         explicit ComponentManager() = default;
 
-        template<typename T>
-        T& CreateComponent(brdID entityID)
+        template<typename T, typename... InitTypes>
+        T& CreateComponent(brdID entityID, InitTypes&&... initVals)
         {
           auto& components = GetComponents<T>();
-          auto& component = components.data[components.data.push(T{entityID})];
+          auto& component = components[components.push(T{entityID, std::forward<InitTypes>(initVals)...})];
           return component;
         }
 
         template<typename T>
-        ComponentContainer<T>& GetComponents()
+        slotmap<T>& GetComponents()
         {
-          ComponentContainer<T>* ret {nullptr};
-          auto& id = typeid(T);
+          constexpr auto id { componentinfo::template id<T>() };
 
-          auto it = data.find(id);
-          if(it != data.end())
-          {
-            ret = reinterpret_cast<ComponentContainer<T>*>(it->second.get());
-          }
-          else
-          {
-            auto ptr = std::make_unique<ComponentContainer<T>>();
-            ret = ptr.get();
-            data[id] = std::move(ptr);
-          }
-
-          return *ret;
+          return std::get<id>(data);
         }
 
       private:
-        hash_map<Container> data;
+        //hash_map<Container> data;
+
+        template<typename T>
+        using container = slotmap<T>;
+
+        using DataContainer = type_traits::make_container<std::tuple, type_traits::foreach_make_container<container,componentlist>>;
+        DataContainer data;
     };
   };
 };

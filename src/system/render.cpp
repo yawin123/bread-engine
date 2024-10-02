@@ -92,25 +92,25 @@ namespace brd
     // Usamos los shaders
       glUseProgram(shaderProgram);
 
-    auto& sprites = ctxt.GetComponents<Sprite>();
-    auto& transforms = ctxt.GetComponents<Transform2D>();
+    const auto& sprites = ctxt.GetComponents<Sprite>().data();
+    const auto& transforms = ctxt.GetComponents<Transform2D>().data();
 
     // Aquí puedes dibujar tu imagen o realizar cualquier otra operación de renderizado
-    for(int i=0; i < sprites.data.size(); ++i)
+    for(int i=0; i < sprites.size(); ++i)
     {
-      glBindTexture(GL_TEXTURE_2D, sprites.data[i].texture_id); //Activamos la textura
+      glBindTexture(GL_TEXTURE_2D, sprites[i].texture_id); //Activamos la textura
 
       // Transformación
-        auto p = transforms.data[i].Position();
+        auto p = transforms[i].Position();
         glUniform1f(posxID, std::get<0>(p));
         glUniform1f(posyID, std::get<1>(p));
 
-        auto s = transforms.data[i].Scale();
+        auto s = transforms[i].Scale();
         glUniform1f(scalxID, std::get<0>(s));
         glUniform1f(scalyID, std::get<1>(s));
 
       // Dibuja el cuadrado
-        glBindVertexArray(sprites.data[i].VAO);
+        glBindVertexArray(sprites[i].VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     }
 

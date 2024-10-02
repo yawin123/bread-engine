@@ -10,7 +10,7 @@ extern "C" {
 
 namespace brd
 {
-  Sprite::Sprite(core::brdID entityID) : core::Component(entityID)
+  Sprite::Sprite(core::brdID entityID, std::string_view path) : core::Component(entityID)
   {
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -29,15 +29,13 @@ namespace brd
       glEnableVertexAttribArray(0);
       glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
       glEnableVertexAttribArray(1);
+
+    if(path != "") LoadImg(path);
   }
 
-  Sprite::~Sprite()
+  void Sprite::LoadImg(std::string_view path)
   {
-  }
-
-  void Sprite::LoadImg(std::string path)
-  {
-    std::unique_ptr<unsigned char> data = std::unique_ptr<unsigned char>(stbi_load(path.c_str(), &w, &h, &chan, STBI_rgb));
+    std::unique_ptr<unsigned char> data = std::unique_ptr<unsigned char>(stbi_load(path.data(), &w, &h, &chan, STBI_rgb));
 
     texture_id; // Identificador de la textura
     glGenTextures(1, &texture_id);

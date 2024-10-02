@@ -3,7 +3,10 @@
 #include <BreadEngine/core/components.hpp>
 #include <BreadEngine/core/entities.hpp>
 #include <BreadEngine/core/slotmap.hpp>
+#include <BreadEngine/core/type_traits.hpp>
 #include <BreadEngine/core/utils.hpp>
+
+#include <BreadEngine/typedeclarations.hpp>
 
 namespace brd
 {
@@ -13,7 +16,6 @@ namespace brd
     {
       public:
         explicit Context() = default;
-        virtual ~Context() = default;
 
         //template<typename... CMPS>
         inline Entity& CreateEntity()
@@ -23,21 +25,21 @@ namespace brd
           return e;
         }
 
-        template<typename T>
-        T& AddComponent(Entity& entity)
+        template<typename T, typename... InitTypes>
+        T& AddComponent(Entity& entity, InitTypes&&... initVals)
         {
-          return components.CreateComponent<T>(entity.id);
+          return components.CreateComponent<T>(entity.id, initVals...);
         }
 
         template<typename T>
-        ComponentContainer<T>& GetComponents()
+        slotmap<T>& GetComponents()
         {
           return components.GetComponents<T>();
         }
 
       private:
         slotmap<Entity> entities;
-        ComponentManager components;
+        ComponentManager<brd::ComponentManagerType> components;
     };
   };
 };
