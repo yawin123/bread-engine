@@ -13,7 +13,7 @@ extern "C" {
 
 namespace brd
 {
-  class Sprite : public core::Component
+  class Sprite : public core::SingleComponent
   {
     public:
       explicit Sprite(core::brdID entityID, std::string_view path = "");

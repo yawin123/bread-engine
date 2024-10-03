@@ -8,6 +8,8 @@
 
 #include <BreadEngine/typedeclarations.hpp>
 
+#include <iostream>
+
 namespace brd
 {
   namespace core
@@ -26,9 +28,28 @@ namespace brd
         }
 
         template<typename T, typename... InitTypes>
+        requires(!IsSingleComponent<T>) // Se ejecuta si T no hereda de SingleComponent
         T& AddComponent(Entity& entity, InitTypes&&... initVals)
         {
-          return components.CreateComponent<T>(entity.id, initVals...);
+          auto rCMP = components.CreateComponent<T>(entity.id, initVals...);
+          entity.addComponent<T>(rCMP);
+          return components.GetComponents<T>()[rCMP];
+        }
+
+        template<typename T, typename... InitTypes>
+        requires(IsSingleComponent<T>) // Se ejecuta si T hereda de SingleComponent
+        T& AddComponent(Entity& entity, InitTypes&&... initVals)
+        {
+          if(!entity.hasComponent<T>())
+          {
+            auto rCMP = components.CreateComponent<T>(entity.id, initVals...);
+            entity.addComponent<T>(rCMP);
+            return components.GetComponents<T>()[rCMP];
+          }
+          else
+          {
+            return components.GetComponents<T>()[entity.getComponent<T>().value()];
+          }
         }
 
         template<typename T>

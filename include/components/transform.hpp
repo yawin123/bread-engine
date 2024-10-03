@@ -6,7 +6,7 @@
 
 namespace brd
 {
-  class Transform2D : public core::Component
+  class Transform2D : public core::SingleComponent
   {
     public:
       explicit Transform2D(core::brdID entityID, float x_p = 0.0f, float y_p = 0.0f, float x_s = 1.0f, float y_s = 1.0f, float r_ = 0.0f);

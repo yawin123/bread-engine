@@ -2,7 +2,7 @@
 
 namespace brd
 {
-  Transform2D::Transform2D(core::brdID entityID, float x_p, float y_p, float x_s, float y_s, float r_) : core::Component(entityID),
+  Transform2D::Transform2D(core::brdID entityID, float x_p, float y_p, float x_s, float y_s, float r_) : core::SingleComponent(entityID),
   p_x (x_p), p_y (y_p), s_x (x_s), s_y (y_s), r(r_) {}
 
   constVector2 Transform2D::Position() const

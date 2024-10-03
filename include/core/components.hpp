@@ -5,6 +5,7 @@
 #include <BreadEngine/core/utils.hpp>
 
 #include <tuple>
+#include <type_traits>
 #include <utility>
 
 namespace brd
@@ -15,15 +16,24 @@ namespace brd
     {
       public:
         explicit Component(brdID eID_);
-        virtual ~Component() = default;
 
         constexpr brdID GetId() const noexcept { return id; }
 
-      private:
+      protected:
         const brdID eID {0};
         const brdID id {0};
         inline static brdID nextID {0};
     };
+
+    class SingleComponent : public Component
+    {
+      public:
+        explicit SingleComponent(brdID eID_);
+    };
+
+    template<typename T>
+    concept IsSingleComponent = std::is_base_of_v<SingleComponent, T>;
+
 
     template<typename CL>
     class ComponentManager
@@ -35,10 +45,10 @@ namespace brd
         explicit ComponentManager() = default;
 
         template<typename T, typename... InitTypes>
-        T& CreateComponent(brdID entityID, InitTypes&&... initVals)
+        const index_type CreateComponent(brdID entityID, InitTypes&&... initVals)
         {
           auto& components = GetComponents<T>();
-          auto& component = components[components.push(T{entityID, std::forward<InitTypes>(initVals)...})];
+          const auto component = components.push(T{entityID, std::forward<InitTypes>(initVals)...});
           return component;
         }
 

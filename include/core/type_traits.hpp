@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <type_traits>
 #include <utility>
 
 namespace brd
@@ -173,6 +174,23 @@ namespace brd
             template <template <typename...> class N, typename T, typename... Ts>
             struct apply_foreach<N, type_list<T, Ts...>> {
                 using type = push_front< N<T>, foreach_make_container< N, type_list<Ts...> > >;
+              };
+
+        //Apply foreach
+            template<typename N, typename L>
+            struct replace_foreach {};
+
+            template<typename N, typename L>
+            using foreach_make_replace = typename replace_foreach< N, L>::type;
+
+            template <typename N, typename T>
+            struct replace_foreach<N, type_list<T>> {
+              using type = type_list<N>;
+            };
+
+            template <typename N, typename T, typename... Ts>
+            struct replace_foreach<N, type_list<T, Ts...>> {
+              using type = push_front< N, foreach_make_replace< N, type_list<Ts...> > >;
             };
     };
   };

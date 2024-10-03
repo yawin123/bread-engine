@@ -10,7 +10,7 @@ extern "C" {
 
 namespace brd
 {
-  Sprite::Sprite(core::brdID entityID, std::string_view path) : core::Component(entityID)
+  Sprite::Sprite(core::brdID entityID, std::string_view path) : core::SingleComponent(entityID)
   {
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
