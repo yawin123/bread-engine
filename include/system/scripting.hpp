@@ -10,10 +10,10 @@
 
 namespace brd
 {
-  struct ScriptingConfiguration : public core::SystemConfiguration
+  /*struct ScriptingConfiguration : public core::SystemConfiguration
   {
     std::optional<core::Context*> ctxt;
-  };
+  };*/
 
   struct ScriptWrapper : public core::Component
   {
@@ -29,16 +29,16 @@ namespace brd
       explicit Scripting() = default;
       virtual ~Scripting() = default;
 
-      virtual void Configure(core::SystemConfiguration& conf) noexcept override;
+      virtual void Configure(core::SystemConfiguration& conf) noexcept override {}
       virtual void Update(core::Context& ctxt) noexcept override;
 
       template<typename T>
-      void AddScript(core::Entity& entity) noexcept
+      void AddScript(core::Entity& entity, core::Context& ctxt) noexcept
       {
-        auto& sw = configuration.ctxt.value()->AddComponent<ScriptWrapper>(entity, std::make_unique<T>(entity.id));
-        sw.script->Start(*configuration.ctxt.value());
+        auto& sw = ctxt.AddComponent<ScriptWrapper>(entity, std::make_unique<T>(entity.id));
+        sw.script->Start(ctxt);
       }
     private:
-      ScriptingConfiguration configuration;
+      //ScriptingConfiguration configuration;
   };
 };

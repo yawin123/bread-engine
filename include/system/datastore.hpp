@@ -5,9 +5,10 @@
 #include <fstream>
 #include <nlohmann/json.hpp>
 
+#include <BreadEngine/core/internal_api.hpp>
+#include <BreadEngine/core/system.hpp>
 #include <BreadEngine/core/type_traits.hpp>
 #include <BreadEngine/typedeclarations.hpp>
-#include <BreadEngine/core/system.hpp>
 
 namespace brd
 {
@@ -26,7 +27,12 @@ namespace brd
       using datainfo = core::type_traits::traits<datalist>;
 
     public:
-      explicit DataStore() = default;
+      explicit DataStore()
+      {
+        // Registrar callbacks para distintos tipos, aquí un ejemplo para 'int', 'float', 'std::string'
+        (RegisterCallbacks<Ts>(), ...);
+      }
+
       virtual ~DataStore() = default;
 
       virtual void Configure(core::SystemConfiguration& conf) noexcept override
@@ -149,5 +155,41 @@ namespace brd
           }
         }
       }
+
+      template<typename T>
+      void RegisterCallbacks()
+      {
+        // Convertimos la lambda explícitamente a std::function
+        core::InternalApi::AddCallback<T, std::string>(
+          "datastore.get",
+          std::function<T(std::string)>{
+            [this](std::string key) -> T {
+              return this->Get<T>(key); // Llamada a la función Get del DataStore
+            }
+          }
+        );
+
+        core::InternalApi::AddCallback<void, std::string, T&&>(
+          "datastore.set",
+          std::function<void(std::string, T&&)>{
+            [this](std::string key, T&& value) {
+              this->Set(key, std::forward<T>(value)); // Usamos std::move para optimización
+            }
+          }
+        );
+      }
+  };
+
+  namespace Data
+  {
+    template<typename T>
+    std::optional<T> Get(const std::string& key) {
+      return brd::core::InternalApi::Call<T, std::string>("datastore.get", std::string(key));
+    }
+
+    template<typename T>
+    void Set(const std::string& key, T&& value) {
+      brd::core::InternalApi::Call<void, std::string, T&&>("datastore.set", std::string(key), std::forward<T>(value));
+    }
   };
 };

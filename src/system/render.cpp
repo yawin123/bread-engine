@@ -30,7 +30,7 @@ namespace brd
 
   void Render::Configure(core::SystemConfiguration& conf)
   {
-    configuration = reinterpret_cast<RenderConfiguration&>(conf);
+    configuration = static_cast<RenderConfiguration&>(conf);
 
     // Se modifica la ventana
       window = Window_ptr{glfwCreateWindow(configuration.width,

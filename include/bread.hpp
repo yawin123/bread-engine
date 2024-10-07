@@ -1,6 +1,7 @@
 #pragma once
 
 #include <BreadEngine/core/context.hpp>
+#include <BreadEngine/core/internal_api.hpp>
 #include <BreadEngine/core/system.hpp>
 #include <BreadEngine/core/slotmap.hpp>
 #include <BreadEngine/core/type_traits.hpp>
@@ -25,6 +26,11 @@ namespace brd {
       using SystemManagerType = brd::core::SystemManager<SystemList>;
 
       explicit Bread() = default;
+
+      core::Context& GetContext()
+      {
+        return context;
+      }
 
       template<typename T>
       T& GetSystem()
@@ -54,5 +60,6 @@ namespace brd {
     private:
       SystemManagerType system;
       brd::core::Context context;
+      brd::core::InternalApi internalApi;
   };
 };
