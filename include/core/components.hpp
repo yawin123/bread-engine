@@ -45,7 +45,7 @@ namespace brd
         explicit ComponentManager() = default;
 
         template<typename T, typename... InitTypes>
-        const index_type CreateComponent(brdID entityID, InitTypes&&... initVals)
+        const brdID CreateComponent(brdID entityID, InitTypes&&... initVals)
         {
           auto& components = GetComponents<T>();
           const auto component = components.push(T{entityID, std::forward<InitTypes>(initVals)...});
@@ -58,6 +58,13 @@ namespace brd
           constexpr auto id { componentinfo::template id<T>() };
 
           return std::get<id>(data);
+        }
+
+        template<typename T>
+        T& GetComponent(brdID componentID)
+        {
+          slotmap<T>& d = GetComponents<T>();
+          return d[componentID];
         }
 
       private:

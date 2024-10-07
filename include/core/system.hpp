@@ -24,13 +24,13 @@ namespace brd
       virtual void Update(Context& ctxt) = 0;
     };
 
-    template<typename... SL>
+    template<typename SL>
     class SystemManager
     {
       public:
         explicit SystemManager() = default;
 
-        using systemlist = type_traits::type_list<SL...>;
+        using systemlist = SL;
         using systeminfo = type_traits::traits<systemlist>;
         template<typename SYSTEM>
         SYSTEM& GetSystem()

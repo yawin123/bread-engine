@@ -14,5 +14,6 @@ namespace brd
 
   class Sprite;
   class Transform2D;
-  using ComponentManagerType = brd::core::type_traits::type_list<Sprite, Transform2D>;
+  class ScriptWrapper;
+  using ComponentManagerType = brd::core::type_traits::type_list<Sprite, Transform2D, ScriptWrapper>;
 };

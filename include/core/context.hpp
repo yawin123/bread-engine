@@ -22,8 +22,17 @@ namespace brd
         //template<typename... CMPS>
         inline Entity& CreateEntity()
         {
-          Entity& e = entities[entities.push(Entity{})];
+          const auto& e = entities.push(Entity{});
+          auto& entity = GetEntity(e);
+          entity.id = e;
+
           //(... AddComponent<CMPS>(e) );
+          return entity;
+        }
+
+        inline Entity& GetEntity(const brdID& entityID)
+        {
+          auto& e = entities[entityID];
           return e;
         }
 
@@ -56,6 +65,12 @@ namespace brd
         slotmap<T>& GetComponents()
         {
           return components.GetComponents<T>();
+        }
+
+        template<typename T>
+        T& GetComponent(brdID cmpID)
+        {
+          return components.GetComponent<T>(cmpID);
         }
 
       private:

@@ -1,0 +1,72 @@
+-- The C compiler identification is GNU 11.4.0
+-- The CXX compiler identification is GNU 11.4.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Looking for pthread.h
+-- Looking for pthread.h - found
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE  
+-- Found Doxygen: /usr/local/bin/doxygen (found version "1.9.4 (adddb8236f9e29bdf9b8093d01bf4ccbb23506ef)") found components: doxygen 
+-- Using X11 for window creation
+-- Found X11: /usr/include   
+-- Looking for XOpenDisplay in /usr/lib/x86_64-linux-gnu/libX11.so;/usr/lib/x86_64-linux-gnu/libXext.so
+-- Looking for XOpenDisplay in /usr/lib/x86_64-linux-gnu/libX11.so;/usr/lib/x86_64-linux-gnu/libXext.so - found
+-- Looking for gethostbyname
+-- Looking for gethostbyname - found
+-- Looking for connect
+-- Looking for connect - found
+-- Looking for remove
+-- Looking for remove - found
+-- Looking for shmat
+-- Looking for shmat - found
+-- Looking for IceConnectionNumber in ICE
+-- Looking for IceConnectionNumber in ICE - found
+-- Using the multi-header code from /home/yawin/Dokumentuak/Programacion/C++/Bread/libs/nlohmann_json/include/
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/yawin/Dokumentuak/Programacion/C++/Bread/bin/linux
+[  1%] Building C object libs/glfw/src/CMakeFiles/glfw.dir/context.c.o
+[  2%] Building C object libs/glfw/src/CMakeFiles/glfw.dir/init.c.o
+[  2%] Building C object libs/glfw/src/CMakeFiles/glfw.dir/input.c.o
+[  3%] Building C object libs/glfw/src/CMakeFiles/glfw.dir/monitor.c.o
+[  4%] Building C object libs/glfw/src/CMakeFiles/glfw.dir/vulkan.c.o
+[  5%] Building C object libs/glfw/src/CMakeFiles/glfw.dir/window.c.o
+[  6%] Building C object libs/glfw/src/CMakeFiles/glfw.dir/x11_init.c.o
+[  6%] Building C object libs/glfw/src/CMakeFiles/glfw.dir/x11_monitor.c.o
+[  7%] Building C object libs/glfw/src/CMakeFiles/glfw.dir/x11_window.c.o
+[  8%] Building C object libs/glfw/src/CMakeFiles/glfw.dir/xkb_unicode.c.o
+[  9%] Building C object libs/glfw/src/CMakeFiles/glfw.dir/posix_time.c.o
+[  9%] Building C object libs/glfw/src/CMakeFiles/glfw.dir/posix_thread.c.o
+[ 10%] Building C object libs/glfw/src/CMakeFiles/glfw.dir/glx_context.c.o
+[ 11%] Building C object libs/glfw/src/CMakeFiles/glfw.dir/egl_context.c.o
+[ 12%] Building C object libs/glfw/src/CMakeFiles/glfw.dir/osmesa_context.c.o
+[ 13%] Building C object libs/glfw/src/CMakeFiles/glfw.dir/linux_joystick.c.o
+[ 13%] Linking C static library libglfw3.a
+[ 13%] Built target glfw
+[ 13%] Building CXX object CMakeFiles/BreadEngine.dir/src/components/script.cpp.o
+[ 14%] Building CXX object CMakeFiles/BreadEngine.dir/src/components/sprite.cpp.o
+[ 15%] Building CXX object CMakeFiles/BreadEngine.dir/src/components/transform.cpp.o
+[ 16%] Building CXX object CMakeFiles/BreadEngine.dir/src/core/components.cpp.o
+[ 16%] Building CXX object CMakeFiles/BreadEngine.dir/src/system/render.cpp.o
+[ 17%] Building CXX object CMakeFiles/BreadEngine.dir/src/system/scripting.cpp.o
+In file included from /home/yawin/Dokumentuak/Programacion/C++/Bread/src/system/scripting.cpp:1:
+/usr/include/BreadEngine/system/scripting.hpp: In member function ‘void brd::Scripting::AddScript(brd::core::Entity&, InitTypes&& ...)’:
+/usr/include/BreadEngine/system/scripting.hpp:36:23: error: ‘struct brd::ScriptingConfiguration’ has no member named ‘value’
+   36 |         configuration.value()->ctxt.AddComponent<ScriptWrapper>(entity, T{initVals...});
+      |                       ^~~~~
+/usr/include/BreadEngine/system/scripting.hpp:36:63: error: expected primary-expression before ‘>’ token
+   36 |         configuration.value()->ctxt.AddComponent<ScriptWrapper>(entity, T{initVals...});
+      |                                                               ^
+make[2]: *** [CMakeFiles/BreadEngine.dir/build.make:146: CMakeFiles/BreadEngine.dir/src/system/scripting.cpp.o] Error 1
+make[1]: *** [CMakeFiles/Makefile2:243: CMakeFiles/BreadEngine.dir/all] Error 2
+make: *** [Makefile:136: all] Error 2
+mv: no se puede efectuar `stat' sobre 'libBreadEngine.so': No existe el archivo o el directorio

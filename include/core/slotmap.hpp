@@ -1,11 +1,13 @@
 #pragma once
 
+#include <BreadEngine/core/utils.hpp>
+
 #include <utility>
 #include <vector>
 
 namespace brd {
   namespace core {
-    using index_type = std::size_t;
+    using index_type = brdID;
 
     template<typename T, index_type Capacity = 10>
     class slotmap {
